@@ -175,29 +175,3 @@ class KernelConv(nn.Module):
         # print('white_level', white_level.size())
         pred_img = pred_img / white_level
         return pred_img
-
-
-if __name__ == "__main__":
-    from torchvision import transforms, utils
-    from PIL import Image
-    from utils import gaussian_noise, uniform_noise
-    img = Image.open('0000fake.png').convert("RGB")
-
-    img_noise = uniform_noise(img, -20, 20)
-    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize([0.5] * 3, [0.5] * 3)])
-    img, img_noise = transform(img), transform(img_noise)
-    # img, img_noise = img.unsqueeze(dim=0), img_noise.unsqueeze(dim=0)
-
-    print(torch.max(img), torch.min(img))
-
-    kpn = KPN(color=True)
-    kpn.load_state_dict(torch.load('checkpoints/checkpoints_for_kpn/try_2/dg_49.pth'))
-    pred_img = kpn(img, img_noise)
-
-    print(torch.max(pred_img), torch.min(pred_img))
-
-    # utils.save_image(pred_img, 'filtered.png', normalize=True)
-    from utils import saving_image
-    saving_image(pred_img, 'fake_filter.png')
-    saving_image(img_noise, 'fake_noise.png')
-    # utils.save_image(img_noise, 'noise.png', normalize=True)
